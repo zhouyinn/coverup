@@ -15,21 +15,20 @@ class GptV2Prompter(Prompter):
 
         return [
             mk_message(f"""
-You are an expert Python test-driven developer.
+You are an expert Java test-driven developer.
 The code below, extracted from {filename}, does not achieve full coverage:
 when tested, {segment.lines_branches_missing_do()} not execute.
-Create new pytest test functions that execute all missing lines and branches, always making
+Create new JUnit 4 test functions that execute all missing lines and branches, always making
 sure that each test is correct and indeed improves coverage.
 Use the get_info tool function as necessary.
-Always send entire Python test scripts when proposing a new test or correcting one you
+Always send entire test files when proposing a new test or correcting one you
 previously proposed.
 Be sure to include assertions in the test that verify any applicable postconditions.
 Please also make VERY SURE to clean up after the test, so as to avoid state pollution;
-use 'monkeypatch' or 'pytest-mock' if appropriate.
-Write as little top-level code as possible, and in particular do not include any top-level code
-calling into pytest.main or the test itself.
-Respond ONLY with the Python code enclosed in backticks, without any explanation.
-```python
+use 'Mockito' if appropriate.
+Write as little top-level code as possible, and in particular do not include any main method or code that calls the tests directly.
+Respond ONLY with the Java code enclosed in backticks, without any explanation.
+```java
 {segment.get_excerpt()}
 ```
 """)
@@ -39,7 +38,7 @@ Respond ONLY with the Python code enclosed in backticks, without any explanation
     def error_prompt(self, segment: CodeSegment, error: str) -> T.List[dict] | None:
         return [mk_message(f"""\
 Executing the test yields an error, shown below.
-Modify or rewrite the test to correct it; respond only with the complete Python code in backticks.
+Modify or rewrite the test to correct it; respond only with the complete Java code in backticks.
 Use the get_info tool function as necessary.
 
 {error}""")
@@ -50,7 +49,7 @@ Use the get_info tool function as necessary.
                                 missing_lines: set, missing_branches: set) -> T.List[dict] | None:
         return [mk_message(f"""\
 The tests still lack coverage: {lines_branches_do(missing_lines, set(), missing_branches)} not execute.
-Modify it to correct that; respond only with the complete Python code in backticks.
+Modify it to correct that; respond only with the complete Java code in backticks.
 Use the get_info tool function as necessary.
 """)
         ]
